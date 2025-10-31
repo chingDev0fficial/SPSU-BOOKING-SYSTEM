@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100%;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+.form-container {
+    background: white;
+    padding: 40px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .form-container {
+        padding: 20px;
+    }
+    
+    h2 {
+        font-size: 24px;
+    }
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #444;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.required {
+    color: #e74c3c;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+input:valid {
+    border-color: #27ae60;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 30px 0;
+}
+
+.note {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 15px;
+    border-radius: 5px;
+    color: #856404;
+    font-size: 14px;
+    margin-top: 10px;
+    visibility: hidden;
+}
+
+input[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin-top: 20px;
+}
+
+input[type="submit"]:hover {
+    transform: translateY(-2px);
+}
+
+input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+.button-style {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    outline: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+}
+</style>
+
+</head>
+<body>
+
+<div class="form-container">  
+  
+  <form class="contactForm">
+
+    <div id="bookingUserInfo">
+        <h2>Contact Information</h2>
+        <p class="subtitle">Please fill out the form below</p>
+
+        <div class="form-group">
+        <label for="booking_name">
+            Booking Name <span class="required">*</span>
+        </label>
+            <input 
+                    type="text" 
+                    id="booking_name" 
+                    name="booking_name"
+                    placeholder="Enter Booking Name"
+                    required
+                    >
+        </div>
+
+        <div class="form-group">
+            <label for="num_users">
+                Number of Users <span class="required">*</span>
+            </label>
+            <input 
+                    type="number" 
+                    id="num_users" 
+                    name="num_users"
+                    required
+                    >
+        </div>
+
+        <div class="form-group">
+            <label for="name_users">
+                Name of Users <span class="required">*</span>
+            </label>
+            <input 
+                    type="text" 
+                    id="name_users" 
+                    name="name_users" 
+                    required
+                    >
+            </div>
+        
+        <hr>
+        
+        <h2>Select Facility</h2>
+        <p class="subtitle">Please select library type and facility</p>
+        
+        
+        <div class="form-group">
+        <label for="library">
+            Library Type <span class="required">*</span>
+        </label>
+        <select 
+                id="library" 
+                name="library"
+                onchange="handleLibraryChange(this)"
+                required
+                >
+                <option value="" disabled selected>Please wait...</option>
+                
+        </select>
+        </div>
+
+        <div class="form-group" id="facilityGroup" style="visibility:hidden">
+        <label for="facility">
+            Facility <span class="required">*</span>
+        </label>
+            <select 
+                id="facility" 
+                name="facility"
+                onchange="selectFacilityOnChange(this)"
+                required
+                >        
+            </select>
+        </div>
+
+        <div class="note" id="noteMessage">
+            <!-- message here -->
+        </div>
+
+        <button id="nextButton" class="button-style" onclick="onClickNextBTN()" disabled>Next</button>
+    </div>
+
+    <div id="timestamp" style="visibility: hidden; display: none;">
+        <h2>Booking Details</h2>
+        <p class="subtitle">Please fill out the form below</p>
+
+        <div class="form-group">
+        <label for="date">
+            Date <span class="required">*</span>
+        </label>
+        <input 
+                type="date" 
+                id="date" 
+                name="date" 
+                required
+                >
+        </div>
+
+        <div class="form-group">
+        <label for="startTime">
+            Start Time <span class="required">*</span>
+        </label>
+        <input 
+                type="time" 
+                id="startTime" 
+                name="startTime" 
+                required
+                >
+        </div>
+
+        <div class="form-group">
+        <label for="endTime">
+            End Time <span class="required">*</span>
+        </label>
+        <input 
+                type="time" 
+                id="endTime" 
+                name="endTime" 
+                required
+                >
+        </div>
+
+        <div class="note" id="bookingNote">
+            <!-- Booking notes will appear here -->
+        </div>
+
+        <input id="submitBTN" type="submit" disabled>
+
+    </div>
+
+  </form>
+  
+</div>
+
+</body>
+
+<script>
+const libraryAPI            = "https://script.google.com/macros/s/AKfycbw-VYZKX9NYGbRjlKONzbBMjZ9qktK1-U5vifLEQaCtW7Fr8EpG3IYoRe-kZE-Bggiy/exec";
+const facilityAPI           = "https://script.google.com/macros/s/AKfycbx9U1kwoU6jxlybJ13ELMahyKgREE2SbwqmMtrID1kwEYg24oGJBkN4IYEFn9zDBC64/exec";
+const bookingAPI            = "https://script.google.com/macros/s/AKfycbzJpF-LgUQbxDLp98XWrooXDBKDCgQdcYdozbnYoRU-t0BaX_Rge0fDMRjcZMMLz7A/exec";
+const bookingInsertAPI      = "https://script.google.com/macros/s/AKfycbyhME9dWzTA0Cvf1Ni09kgwV3RdKH_DfDEV1CuRtLcu1orlE63E-SqT-l6B3lmVXt1a/exec";
+
+const selectLibraryType     = document.getElementById("library");
+const facilityGroup         = document.getElementById("facilityGroup");
+const selectFacility        = document.getElementById("facility");
+const noteMessage           = document.getElementById("noteMessage");
+const bookingNote           = document.getElementById("bookingNote");
+const submitBTN             = document.getElementById("submitBTN");
+
+const bookingNameVal        = document.getElementById('booking_name');
+const numUsersVal           = document.getElementById('num_users');
+const nameUsersVal          = document.getElementById('name_users');
+
+const nextBTN               = document.getElementById("nextButton");
+const bookingUserInfoDiv    = document.getElementById("bookingUserInfo");
+const timestamp             = document.getElementById("timestamp");
+
+let globalFacilityData      = null;
+let globalSelectedFacility  = null;
+let globalFetchBookings     = null;
+let globalValidationResult  = null;
+
+let pollingInterval         = null;
+let lastLibraryData         = null;
+let lastFacilityData        = null;
+
+function transformOption(library, select) {
+    const option = document.createElement("option");
+    option.value = library['id'];
+    option.textContent = library['name'];
+    select.appendChild(option);
+}
+
+function addDefaultOption(message, select) {
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = message;
+    option.disabled = true;
+    option.selected = true;
+    select.appendChild(option);
+}
+
+function addOptions(data, select) {
+    data.forEach(library => {
+        if (library['status'] === 'available') {
+            transformOption(library, select);
+        }
+    });
+}
+
+function updateNextButtonState() {
+    if( !nextBTN ) return;
+
+    // Get the actual input elements (the constants at top are the elements themselves)
+    const bookingName = bookingNameVal?.value.trim();
+    const numUsers = numUsersVal?.value.trim();
+    const nameUsers = nameUsersVal?.value.trim();
+    const libraryVal = selectLibraryType?.value;
+    
+    // Check if facility group is visible
+    const facilityVisible = facilityGroup && 
+        (facilityGroup.style.visibility === 'visible' || 
+         getComputedStyle(facilityGroup).visibility === 'visible');
+    const facilityVal = selectFacility?.value;
+
+    // All required fields must be filled
+    let allFilled = !!(bookingName && numUsers && nameUsers && libraryVal);
+    
+    // If facility is visible, it must also be selected
+    if (facilityVisible) {
+        allFilled = allFilled && !!facilityVal;
+    }
+
+    nextBTN.disabled = !allFilled;
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Initialize button as disabled
+    if (nextBTN) {
+        nextBTN.disabled = true;
+    }
+
+    // Add listeners to all required fields
+    if (bookingNameVal) {
+        bookingNameVal.addEventListener('input', updateNextButtonState);
+        bookingNameVal.addEventListener('change', updateNextButtonState);
+    }
+
+    if (numUsersVal) {
+        numUsersVal.addEventListener('input', updateNextButtonState);
+        numUsersVal.addEventListener('change', updateNextButtonState);
+    }
+
+    if (nameUsersVal) {
+        nameUsersVal.addEventListener('input', updateNextButtonState);
+        nameUsersVal.addEventListener('change', updateNextButtonState);
+    }
+
+    if (selectLibraryType) {
+        selectLibraryType.addEventListener('change', updateNextButtonState);
+    }
+
+    if (selectFacility) {
+        selectFacility.addEventListener('change', updateNextButtonState);
+    }
+
+    // Initial state check
+    updateNextButtonState();
+});
+
+function onClickNextBTN() {
+    bookingUserInfoDiv.style.display = "none";
+    bookingUserInfoDiv.style.visibility = "hidden";
+
+    // timestamp div visible
+    timestamp.style.display = "block";
+    timestamp.style.visibility = "visible";
+}
+
+async function loadLibraries() {
+
+    const currentSelection = selectLibraryType.value;
+
+    const handleFetchLibraries = async () => {
+        try {
+            const response = await fetch(libraryAPI);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching libraries:', error);
+            return [];
+        }
+    }
+
+    const handleFetchBookings = async () => {
+        try {
+            const response = await fetch(bookingAPI);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+            return [];
+        }
+    }
+
+    let fetchedBookings = await handleFetchBookings();
+    globalFetchBookings = fetchedBookings;
+
+    let fetchedLibraries = await handleFetchLibraries();
+
+    selectLibraryType.innerHTML = "";
+    addDefaultOption("Please select a library", selectLibraryType);
+
+    addOptions(fetchedLibraries, selectLibraryType);
+
+    // Restore selection after repopulating the dropdown
+    if (currentSelection) {
+        selectLibraryType.value = currentSelection;
+        
+        // If the previously selected library still exists
+        if (selectLibraryType.value === currentSelection) {
+            // Make sure facilities are still visible
+            // Make sure facilities are still visible
+            if (selectLibraryType.value) {
+                facilityGroup.style.visibility = "visible";
+            }
+        }
+    }
+}
+
+function handleLibraryChange(selectElement) {
+    const selectedValue = selectElement.value;
+    
+    if (!selectedValue) {
+        facilityGroup.style.visibility = "hidden";
+        return;
+    }
+    
+    loadFacilities(selectedValue);
+}
+
+async function loadFacilities(libraryId) {
+
+    const currentFacilityValue = selectFacility.value;
+
+    const handleFetchFacilities = async () => {
+        try {
+            const response = await fetch(`${facilityAPI}?id=${libraryId}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching facilities:', error);
+            return [];
+        }
+    }
+
+    let facilitiesData = await handleFetchFacilities();
+    globalFacilityData = facilitiesData;
+
+    selectFacility.innerHTML = "";
+    addDefaultOption("Please select a facility", selectFacility);
+
+    addOptions(facilitiesData, selectFacility);
+
+    facilityGroup.style.visibility = "visible";
+
+    // Restore facility selection if it still exists
+    if (currentFacilityValue) {
+        selectFacility.value = currentFacilityValue;
+    }
+}
+
+function selectFacilityOnChange(facilityId) {
+    const selectedFacilityId = facilityId.value;
+    const selectedFacility = globalFacilityData.find(facility => facility['id'] == selectedFacilityId);
+    
+    globalSelectedFacility = selectedFacility;
+
+    noteMessage.innerHTML = ""; // Clear previous message
+    const paragraph = document.createElement('p');
+    paragraph.textContent = `Note: the selected facility only open at ${selectedFacility.open_range_time} and templorily closed on ${selectedFacility.tem_close_time}.`;
+    noteMessage.appendChild(paragraph);
+    noteMessage.style.visibility = "visible";
+    
+    // Check if date and time are already filled, then re-validate
+    const dateInput = document.getElementById("date");
+    const startTimeInput = document.getElementById("startTime");
+    const endTimeInput = document.getElementById("endTime");
+    
+    if (dateInput.value && startTimeInput.value && endTimeInput.value) {
+        console.log("Facility changed, re-validating booking...");
+        triggerValidation();
+    }
+}
+
+// Real-time update for libraries
+function checkLibraryUpdates() {
+    fetch(libraryAPI)
+        .then(res => res.json())
+        .then(data => {
+            const newData = JSON.stringify(data);
+            
+            // Only update if data changed
+            if (lastLibraryData !== newData) {
+                lastLibraryData = newData;
+                console.log('Libraries updated!');
+                loadLibraries();
+            }
+        })
+        .catch(error => console.error('Error checking library updates:', error));
+}
+
+// Real-time update for facilities (if a library is selected)
+function checkFacilityUpdates() {
+    const selectedLibrary = selectLibraryType.value;
+    
+    if (selectedLibrary && facilityGroup.style.visibility === "visible") {
+        fetch(`${facilityAPI}?id=${selectedLibrary}`)
+            .then(res => res.json())
+            .then(data => {
+                const newData = JSON.stringify(data);
+                
+                // Only update if data changed
+                if (lastFacilityData !== newData) {
+                    lastFacilityData = newData;
+                    console.log('Facilities updated!');
+                    loadFacilities(selectedLibrary);
+                }
+            })
+            .catch(error => console.error('Error checking facility updates:', error));
+    }
+}
+
+// Start real-time updates
+function startRealTimeUpdates() {
+    // Check for updates every 5 seconds
+    pollingInterval = setInterval(() => {
+        checkLibraryUpdates();
+        checkFacilityUpdates();
+    }, 5000); // 5000ms = 5 seconds
+    
+    console.log('Real-time updates started (every 5 seconds)');
+}
+
+// Stop real-time updates
+function stopRealTimeUpdates() {
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+        console.log('Real-time updates stopped');
+    }
+}
+
+// Smart polling - pause when tab is hidden
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        console.log('Tab hidden - pausing updates');
+        stopRealTimeUpdates();
+    } else {
+        console.log('Tab visible - resuming updates');
+        checkLibraryUpdates(); // Check immediately
+        checkFacilityUpdates(); // Check immediately
+        startRealTimeUpdates(); // Resume polling
+    }
+});
+
+// Initialize on page load
+loadLibraries();
+startRealTimeUpdates();
+
+// Cleanup when page unloads
+window.addEventListener('beforeunload', () => {
+    stopRealTimeUpdates();
+});
+
+// ============================================
+// BOOKING VALIDATION FUNCTIONS
+// ============================================
+
+// Convert 24-hour format to 12-hour format with AM/PM
+function convertTo12Hour(timeStr) {
+    if (!timeStr || timeStr.indexOf(':') === -1) return '';
+    
+    let [hours, minutes] = timeStr.split(':').map(Number);
+    
+    const period = hours >= 12 ? 'PM' : 'AM';
+    
+    // Convert hours from 24-hour to 12-hour format
+    if (hours > 12) hours -= 12;
+    if (hours === 0) hours = 12;
+    
+    return `${hours}:${minutes.toString().padStart(2, '0')} ${period}`;
+}
+
+// Convert 12-hour format with AM/PM to 24-hour format
+function convertTo24Hour(timeStr) {
+    console.log("Converting to 24h:", timeStr);
+    
+    // Handle edge cases
+    if (!timeStr || !timeStr.includes(' ')) {
+        console.error("Invalid time format:", timeStr);
+        return "00:00"; // Default value
+    }
+    
+    // Convert "9:00 AM" format to "09:00" format
+    const [time, period] = timeStr.split(' ');
+    
+    if (!time || !period) {
+        console.error("Failed to split time and period:", timeStr);
+        return "00:00";
+    }
+    
+    let [hours, minutes] = time.split(':').map(Number);
+    
+    if (isNaN(hours) || isNaN(minutes)) {
+        console.error("Invalid hours or minutes:", hours, minutes);
+        return "00:00";
+    }
+    
+    if (period === 'PM' && hours < 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    
+    const result = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    console.log("Converted result:", result);
+    
+    return result;
+}
+
+// Convert booking time format (handles "1:00:00 PM" format)
+function convertBookingTimeFormat(timeStr) {
+    if (!timeStr) return '';
+    
+    console.log("Converting booking time format:", timeStr);
+    
+    // Handle "1:00:00 PM" format - extract hours, minutes and period
+    const timeMatch = timeStr.match(/(\d+):(\d+)(?::(\d+))?\s+([AP]M)/i);
+    if (timeMatch) {
+        let [_, hours, minutes, __, period] = timeMatch;
+        hours = parseInt(hours);
+        
+        // Convert to 24-hour format
+        if (period.toUpperCase() === 'PM' && hours < 12) hours += 12;
+        if (period.toUpperCase() === 'AM' && hours === 12) hours = 0;
+        
+        return `${hours.toString().padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+    }
+    
+    return timeStr;
+}
+
+// Extract time from various formats (ISO, 12-hour, 24-hour)
+function extractTimeFromAny(timeStr) {
+    // Handle ISO date string format
+    if (timeStr && timeStr.includes('T')) {
+        try {
+            const date = new Date(timeStr);
+            if (!isNaN(date.getTime())) {
+                // Use local time instead of UTC to avoid timezone issues
+                return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+            }
+        } catch (e) {
+            console.error("Failed to parse ISO date:", timeStr);
+        }
+    }
+    
+    // Handle 12-hour clock format (1:00:00 PM)
+    if (timeStr && (timeStr.includes('AM') || timeStr.includes('PM'))) {
+        return convertBookingTimeFormat(timeStr);
+    }
+    
+    // Already in 24h format or unknown format
+    return timeStr;
+}
+
+// Normalize date format to YYYY-MM-DD
+function normalizeDateFormat(dateStr) {
+    if (!dateStr) return "";
+    
+    try {
+        // Handle ISO datetime format (2025-10-19T16:00:00.000Z)
+        if (dateStr.includes('T')) {
+            const date = new Date(dateStr);
+            if (!isNaN(date.getTime())) {
+                // Extract just the date part in local timezone
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+        }
+        
+        // Handle MM/DD/YYYY format
+        if (dateStr.includes('/')) {
+            const [month, day, year] = dateStr.split('/');
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        }
+        // Already in YYYY-MM-DD format
+        else if (dateStr.includes('-') && !dateStr.includes('T')) {
+            return dateStr;
+        }
+        
+        // Unknown format, try to parse as date
+        const date = new Date(dateStr);
+        if (!isNaN(date.getTime())) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+    } catch (e) {
+        console.error("Error normalizing date:", e);
+    }
+    
+    return dateStr; // Return original if we can't parse
+}
+
+// Convert time string to minutes since midnight for comparison
+function convertTimeToMinutes(timeStr) {
+    if (!timeStr || timeStr.indexOf(':') === -1) return 0;
+    
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return (hours * 60) + minutes;
+}
+
+// Check if two time periods overlap
+function isTimeOverlap(existingStart, existingEnd, newStart, newEnd) {
+    // Convert all times to minutes since midnight for proper comparison
+    const existingStartMinutes = convertTimeToMinutes(existingStart);
+    const existingEndMinutes = convertTimeToMinutes(existingEnd);
+    const newStartMinutes = convertTimeToMinutes(newStart);
+    const newEndMinutes = convertTimeToMinutes(newEnd);
+    
+    console.log("Time comparison in minutes:", {
+        "Existing booking": `${existingStartMinutes}-${existingEndMinutes}`,
+        "New booking": `${newStartMinutes}-${newEndMinutes}`,
+        "newStartMinutes < existingEndMinutes": newStartMinutes < existingEndMinutes,
+        "newEndMinutes > existingStartMinutes": newEndMinutes > existingStartMinutes
+    });
+    
+    // Check for overlap using numeric comparison
+    // Two time periods overlap if: newStart < existingEnd AND newEnd > existingStart
+    const hasOverlap = (newStartMinutes < existingEndMinutes && newEndMinutes > existingStartMinutes);
+    
+    console.log("Has overlap:", hasOverlap);
+    
+    return hasOverlap;
+}
+
+// Check if booking is within facility operating hours
+function checkFacilityHours(date, startTime, endTime) {
+    // Parse facility operating hours
+    const facilityHours = globalSelectedFacility.open_range_time;
+    
+    // Example format: "9:00 AM - 5:00 PM"
+    const [facilityOpen, facilityClose] = facilityHours.split(' - ');
+    
+    // Convert to 24-hour format for comparison
+    const facilityOpenTime = convertTo24Hour(facilityOpen);
+    const facilityCloseTime = convertTo24Hour(facilityClose);
+    
+    if (startTime < facilityOpenTime) {
+        return { 
+            valid: false, 
+            message: `Booking starts before facility opening time (${facilityOpen})` 
+        };
+    }
+    
+    if (endTime > facilityCloseTime) {
+        return { 
+            valid: false, 
+            message: `Booking ends after facility closing time (${facilityClose})` 
+        };
+    }
+    
+    if (startTime >= endTime) {
+        return {
+            valid: false,
+            message: "End time must be after start time"
+        };
+    }
+    
+    return { valid: true };
+}
+
+// Check if booking overlaps with temporary closure time
+function checkTemporaryClosure(date, startTime, endTime) {
+    // Parse temporary closure times
+    const closureTimeRange = globalSelectedFacility.tem_close_time;
+    
+    // Example: "10:00 AM - 1:00 PM"
+    const [closureStart, closureEnd] = closureTimeRange.split(' - ');
+    
+    // Convert to 24-hour format
+    const closureStartTime = convertTo24Hour(closureStart);
+    const closureEndTime = convertTo24Hour(closureEnd);
+    
+    // Check if booking overlaps with closure time
+    if (isTimeOverlap(closureStartTime, closureEndTime, startTime, endTime)) {
+        return {
+            valid: false,
+            message: `Facility is temporarily closed from ${closureStart} to ${closureEnd}`
+        };
+    }
+    
+    return { valid: true };
+}
+
+// Check for conflicts with existing bookings
+function checkBookingConflicts(date, startTime, endTime) {
+    console.log("Checking conflicts with data:", globalFetchBookings);
+    
+    if (!globalFetchBookings || !globalFetchBookings.length) {
+        return { valid: true };
+    }
+    
+    // Filter bookings for the same facility and date
+    const conflictingBookings = globalFetchBookings.filter(booking => {
+        const facilityId = booking.facility_id;
+        const bookingDate = booking.date;
+        const bookingStartTime = booking.start_time;
+        const bookingEndTime = booking.end_time;
+        
+        // Normalize dates for comparison (MM/DD/YYYY vs YYYY-MM-DD)
+        const normalizedBookingDate = normalizeDateFormat(bookingDate);
+        const normalizedInputDate = normalizeDateFormat(date);
+        
+        console.log("Date comparison:", {
+            "API date": bookingDate,
+            "Input date": date,
+            "Normalized API date": normalizedBookingDate,
+            "Normalized input date": normalizedInputDate,
+            "Same date?": normalizedBookingDate === normalizedInputDate
+        });
+        
+        // Extract times from various formats
+        const apiStartTime = extractTimeFromAny(bookingStartTime);
+        const apiEndTime = extractTimeFromAny(bookingEndTime);
+        
+        // Convert to 12-hour format for display
+        const apiStart12h = convertTo12Hour(apiStartTime);
+        const apiEnd12h = convertTo12Hour(apiEndTime);
+        const newStart12h = convertTo12Hour(startTime);
+        const newEnd12h = convertTo12Hour(endTime);
+        
+        console.log("Time comparison:", {
+            "API times (24h)": `${apiStartTime}-${apiEndTime}`,
+            "Input times (24h)": `${startTime}-${endTime}`,
+            "API times (12h)": `${apiStart12h}-${apiEnd12h}`,
+            "Input times (12h)": `${newStart12h}-${newEnd12h}`
+        });
+        
+        const sameFacility = facilityId == globalSelectedFacility.id;
+        const sameDate = normalizedBookingDate === normalizedInputDate;
+        const timeOverlaps = isTimeOverlap(apiStartTime, apiEndTime, startTime, endTime);
+        
+        console.log("=== CONFLICT CHECK RESULTS ===");
+        console.log(`Same facility: ${sameFacility} (${facilityId} == ${globalSelectedFacility.id})`);
+        console.log(`Same date: ${sameDate} (${normalizedBookingDate} === ${normalizedInputDate})`);
+        console.log(`Time overlaps: ${timeOverlaps}`);
+        console.log(`Overall match: ${sameFacility && sameDate && timeOverlaps}`);
+        console.log("==============================");
+        
+        return sameFacility && sameDate && timeOverlaps;
+    });
+    
+    console.log("Found conflicts:", conflictingBookings);
+    console.log("Number of conflicts:", conflictingBookings.length);
+    
+    if (conflictingBookings.length > 0) {
+        return {
+            valid: false,
+            message: `Time slot conflicts with existing booking(s)`
+        };
+    }
+    
+    return { valid: true };
+}
+
+// Main validation function
+function validateBookingTime() {
+    if (!globalSelectedFacility) return { valid: false, message: "Please select a facility first" };
+    
+    const dateInput = document.getElementById("date");
+    const startTimeInput = document.getElementById("startTime");
+    const endTimeInput = document.getElementById("endTime");
+    
+    if (!dateInput.value || !startTimeInput.value || !endTimeInput.value) {
+        return { valid: false, message: "Please select date and time" };
+    }
+    
+    // Parse inputs
+    const selectedDate = dateInput.value;
+    const startTime = startTimeInput.value;
+    const endTime = endTimeInput.value;
+    
+    // 1. Check facility operating hours
+    const validHours = checkFacilityHours(selectedDate, startTime, endTime);
+    if (!validHours.valid) return validHours;
+    
+    // 2. Check temporary closures
+    const notClosed = checkTemporaryClosure(selectedDate, startTime, endTime);
+    if (!notClosed.valid) return notClosed;
+    
+    // 3. Check for conflicts with existing bookings
+    const noConflicts = checkBookingConflicts(selectedDate, startTime, endTime);
+    if (!noConflicts.valid) return noConflicts;
+    
+    return { valid: true, message: "Booking time is available" };
+}
+
+// Refresh booking data from API
+async function refreshBookingData() {
+    try {
+        const response = await fetch(bookingAPI);
+        const data = await response.json();
+        globalFetchBookings = data;
+        console.log("Booking data refreshed:", data);
+    } catch (error) {
+        console.error('Error refreshing booking data:', error);
+    }
+}
+
+// Global validation trigger function that can be called from anywhere
+async function triggerValidation() {
+    const dateInput = document.getElementById("date");
+    const startTimeInput = document.getElementById("startTime");
+    const endTimeInput = document.getElementById("endTime");
+    
+    console.log("=== VALIDATION TRIGGERED ===");
+    console.log("Current facility:", globalSelectedFacility);
+    console.log("Date value:", dateInput.value);
+    console.log("Start time value:", startTimeInput.value);
+    console.log("End time value:", endTimeInput.value);
+    
+    // Refresh booking data first
+    await refreshBookingData();
+    
+    // Only validate if all required fields are filled
+    if (globalSelectedFacility && dateInput.value && startTimeInput.value && endTimeInput.value) {
+        console.log("All fields filled, running validation...");
+        const result = validateBookingTime();
+        
+        console.log("Validation result:", result);
+        
+        // Display validation message
+        bookingNote.innerHTML = "";
+        const paragraph = document.createElement('p');
+        
+        // Format message with 12-hour times if it contains time values
+        let message = result.message;
+        
+        // Convert any 24-hour times in the message to 12-hour format
+        const timeRegex = /\b([01]?[0-9]|2[0-3]):([0-5][0-9])\b/g;
+        message = message.replace(timeRegex, match => convertTo12Hour(match));
+        
+        paragraph.textContent = message;
+        
+        if (!result.valid) {
+            paragraph.style.color = "#e74c3c";  // Red for errors
+        } else {
+            paragraph.style.color = "#27ae60";  // Green for success
+        }
+        
+        bookingNote.appendChild(paragraph);
+        bookingNote.style.visibility = "visible";
+
+        if (result.valid) {
+            submitBTN.disabled = false;
+        } else {
+            submitBTN.disabled = true;
+        }
+        
+        globalValidationResult = result.valid;
+        return result.valid;
+    } else {
+        console.log("Validation skipped - missing required fields");
+    }
+    return false;
+}
+
+// Setup validation listeners
+function setupValidationListeners() {
+    const dateInput = document.getElementById("date");
+    const startTimeInput = document.getElementById("startTime");
+    const endTimeInput = document.getElementById("endTime");
+    
+    console.log("Setting up validation listeners...");
+    console.log("Date input:", dateInput);
+    console.log("Start time input:", startTimeInput);
+    console.log("End time input:", endTimeInput);
+    
+    // Attach listeners to call the global triggerValidation function
+    console.log("Attaching event listeners...");
+    dateInput.addEventListener('change', triggerValidation);
+    startTimeInput.addEventListener('change', triggerValidation);
+    endTimeInput.addEventListener('change', triggerValidation);
+    
+    console.log("Validation listeners setup complete");
+}
+
+// Initialize validation listeners after page loads
+window.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM Content Loaded - initializing validation");
+    setupValidationListeners();
+});
+
+// Form submission handler with fetch API
+document.querySelector('form').addEventListener('submit', async function(e) {
+    console.log("Form submit triggered");
+    e.preventDefault();  // Prevent default submission
+    
+    // Refresh booking data and validate before submission
+    const isValid = globalValidationResult !== null ? globalValidationResult : await validateBookingTime();
+    console.log("Form validation result:", isValid);
+    
+    if (isValid) {
+        console.log("Validation passed, submitting form...");
+        
+        // Show loading state
+        submitBTN.disabled = true;
+        submitBTN.value = "Submitting...";
+        
+        try {
+            // Collect form data
+            const formData = new FormData(this);
+            const formDataObj = {};
+
+            console.log("Collected FormData:", Array.from(formData.entries()));
+            
+            // Convert FormData to URL params (which works better with Google Apps Script)
+            formData.forEach((value, key) => {
+                // Handle multiple values for same key (like time inputs)
+                if (formDataObj[key]) {
+                    if (!Array.isArray(formDataObj[key])) {
+                        formDataObj[key] = [formDataObj[key]];
+                    }
+                    formDataObj[key].push(value);
+                } else {
+                    formDataObj[key] = value;
+                }
+            });
+            
+            // Add facility ID
+            if (globalSelectedFacility) {
+                formDataObj.facilityId = globalSelectedFacility.id;
+            }
+
+            console.log("Form data to submit:", formDataObj);
+            
+            // Build URL with query params (works better than POST body for Google Apps Script)
+            let url = new URL(bookingInsertAPI);
+            Object.keys(formDataObj).forEach(key => {
+                if (Array.isArray(formDataObj[key])) {
+                    formDataObj[key].forEach(value => {
+                        url.searchParams.append(key, value);
+                    });
+                } else {
+                    url.searchParams.append(key, formDataObj[key]);
+                }
+            });
+            
+            console.log("Submitting to URL:", url.toString());
+            
+            // Send as GET request with params (more reliable with Google Apps Script)
+            const response = await fetch(url.toString());
+            const result = await response.json();
+            
+            console.log("Response from server:", result);
+            
+            if (result.success) {
+                // Show success message
+                bookingNote.innerHTML = `<p style='color: #27ae60'>Booking successful! Reference: ${result.reference || 'N/A'}</p>`;
+                this.reset(); // Reset form
+                facilityGroup.style.visibility = "hidden";
+                submitBTN.disabled = true; // Disable submit until new form filled
+            } else {
+                // Show error message
+                bookingNote.innerHTML = `<p style='color: #e74c3c'>Booking failed: ${result.message || 'Unknown error'}</p>`;
+                submitBTN.disabled = false; // Allow retry
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            bookingNote.innerHTML = "<p style='color: #e74c3c'>Error submitting form. Please try again.</p>";
+            submitBTN.disabled = false; // Allow retry
+        } finally {
+            bookingNote.style.visibility = "visible";
+            submitBTN.value = "Submit"; // Reset button text
+        }
+    } else {
+        console.log("Validation failed, form not submitted");
+    }
+});
+
+</script>
+</html>
+
+
