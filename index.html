@@ -140,6 +140,47 @@ input[type="submit"]:active {
     border: none;
     color: #ffffff;
     font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button-style:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.button-style:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #999 0%, #666 100%);
+}
+
+.back-button {
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    color: #667eea;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.back-button:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateX(-3px);
+}
+
+.back-button svg {
+    width: 18px;
+    height: 18px;
 }
 </style>
 
@@ -233,6 +274,14 @@ input[type="submit"]:active {
     </div>
 
     <div id="timestamp" style="visibility: hidden; display: none;">
+
+        <button class="back-button" onclick="onClickBackBTN()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back
+        </button>
+
         <h2>Booking Details</h2>
         <p class="subtitle">Please fill out the form below</p>
 
@@ -311,6 +360,8 @@ let globalFacilityData      = null;
 let globalSelectedFacility  = null;
 let globalFetchBookings     = null;
 let globalValidationResult  = null;
+let globalLibraryData       = null;
+let globalSelectedLibrary   = null;
 
 let pollingInterval         = null;
 let lastLibraryData         = null;
@@ -362,8 +413,61 @@ function updateNextButtonState() {
     if (facilityVisible) {
         allFilled = allFilled && !!facilityVal;
     }
+    
+    // Check capacity validation if facility is selected and num_users has value
+    if (allFilled && globalSelectedFacility && numUsers) {
+        const numUsersInt = parseInt(numUsers);
+        const capacity = parseInt(globalSelectedFacility.capacity);
+        
+        // Disable button if number of users exceeds capacity or is invalid
+        if (numUsersInt <= 0 || numUsersInt > capacity) {
+            allFilled = false;
+        }
+    }
 
     nextBTN.disabled = !allFilled;
+}
+
+// Real-time capacity check for the first form
+function checkCapacityRealTime() {
+    if (!globalSelectedFacility) return;
+    
+    const numUsersInput = document.getElementById('num_users');
+    
+    // If note message is visible, update it
+    if (noteMessage && noteMessage.style.visibility === 'visible') {
+        // Remove any existing warning
+        const existingWarning = noteMessage.querySelector('.capacity-warning');
+        if (existingWarning) {
+            existingWarning.remove();
+        }
+        
+        // Check if there's a value to validate
+        if (numUsersInput && numUsersInput.value) {
+            const numUsers = parseInt(numUsersInput.value);
+            const capacity = parseInt(globalSelectedFacility.capacity);
+            
+            // Add warning if exceeds capacity
+            if (numUsers > capacity) {
+                const warningParagraph = document.createElement('p');
+                warningParagraph.className = 'capacity-warning';
+                warningParagraph.style.marginTop = "8px";
+                warningParagraph.style.color = "#e74c3c";
+                warningParagraph.style.fontWeight = "600";
+                warningParagraph.innerHTML = `<strong>⚠️ Warning:</strong> Number of users (${numUsers}) exceeds capacity (${capacity})!`;
+                noteMessage.appendChild(warningParagraph);
+            } else if (numUsers > 0) {
+                // Show success message when within capacity
+                const successParagraph = document.createElement('p');
+                successParagraph.className = 'capacity-warning'; // Use same class for easy removal
+                successParagraph.style.marginTop = "8px";
+                successParagraph.style.color = "#27ae60";
+                successParagraph.style.fontWeight = "600";
+                successParagraph.innerHTML = `<strong>✓</strong> Number of users (${numUsers}) is within capacity.`;
+                noteMessage.appendChild(successParagraph);
+            }
+        }
+    }
 }
 
 
@@ -382,6 +486,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (numUsersVal) {
         numUsersVal.addEventListener('input', updateNextButtonState);
         numUsersVal.addEventListener('change', updateNextButtonState);
+        // Add real-time capacity check
+        numUsersVal.addEventListener('input', checkCapacityRealTime);
+        numUsersVal.addEventListener('change', checkCapacityRealTime);
     }
 
     if (nameUsersVal) {
@@ -408,6 +515,22 @@ function onClickNextBTN() {
     // timestamp div visible
     timestamp.style.display = "block";
     timestamp.style.visibility = "visible";
+}
+
+function onClickBackBTN() {
+    // Hide timestamp section
+    timestamp.style.display = "none";
+    timestamp.style.visibility = "hidden";
+
+    // Show booking user info section
+    bookingUserInfoDiv.style.display = "block";
+    bookingUserInfoDiv.style.visibility = "visible";
+
+    // Clear booking note message
+    if (bookingNote) {
+        bookingNote.innerHTML = "";
+        bookingNote.style.visibility = "hidden";
+    }
 }
 
 async function loadLibraries() {
@@ -440,6 +563,7 @@ async function loadLibraries() {
     globalFetchBookings = fetchedBookings;
 
     let fetchedLibraries = await handleFetchLibraries();
+    globalLibraryData = fetchedLibraries; // Store library data globally
 
     selectLibraryType.innerHTML = "";
     addDefaultOption("Please select a library", selectLibraryType);
@@ -453,7 +577,6 @@ async function loadLibraries() {
         // If the previously selected library still exists
         if (selectLibraryType.value === currentSelection) {
             // Make sure facilities are still visible
-            // Make sure facilities are still visible
             if (selectLibraryType.value) {
                 facilityGroup.style.visibility = "visible";
             }
@@ -466,7 +589,14 @@ function handleLibraryChange(selectElement) {
     
     if (!selectedValue) {
         facilityGroup.style.visibility = "hidden";
+        globalSelectedLibrary = null; // Clear selected library
         return;
+    }
+    
+    // Store the selected library data
+    if (globalLibraryData) {
+        globalSelectedLibrary = globalLibraryData.find(lib => lib.id == selectedValue);
+        console.log('Selected library:', globalSelectedLibrary);
     }
     
     loadFacilities(selectedValue);
@@ -510,10 +640,22 @@ function selectFacilityOnChange(facilityId) {
     globalSelectedFacility = selectedFacility;
 
     noteMessage.innerHTML = ""; // Clear previous message
-    const paragraph = document.createElement('p');
-    paragraph.textContent = `Note: the selected facility only open at ${selectedFacility.open_range_time} and templorily closed on ${selectedFacility.tem_close_time}.`;
-    noteMessage.appendChild(paragraph);
+    
+    // Add facility hours info
+    const hoursParagraph = document.createElement('p');
+    hoursParagraph.textContent = `Note: The selected facility is only open at ${selectedFacility.open_range_time} and temporarily closed on ${selectedFacility.tem_close_time}.`;
+    noteMessage.appendChild(hoursParagraph);
+    
+    // Add capacity info
+    const capacityParagraph = document.createElement('p');
+    capacityParagraph.style.marginTop = "8px";
+    capacityParagraph.innerHTML = `<strong>Capacity:</strong> Maximum ${selectedFacility.capacity} persons allowed.`;
+    noteMessage.appendChild(capacityParagraph);
+    
     noteMessage.style.visibility = "visible";
+    
+    // Trigger real-time capacity check to show dynamic warning/success message
+    checkCapacityRealTime();
     
     // Check if date and time are already filled, then re-validate
     const dateInput = document.getElementById("date");
@@ -909,6 +1051,80 @@ function checkBookingConflicts(date, startTime, endTime) {
     return { valid: true };
 }
 
+// Check if booking is on weekend and library allows weekend bookings
+function checkWeekendAvailability(date) {
+    if (!globalSelectedLibrary) {
+        return { valid: true }; // If no library selected, skip check
+    }
+    
+    // Parse the selected date
+    const selectedDate = new Date(date);
+    const dayOfWeek = selectedDate.getDay(); // 0 = Sunday, 6 = Saturday
+    
+    // Check if selected date is Saturday (6) or Sunday (0)
+    const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+    
+    if (isWeekend) {
+        // Check library's weekend_availability
+        const weekendAvailable = globalSelectedLibrary.weekend_availability;
+        
+        console.log('Weekend check:', {
+            date: date,
+            dayOfWeek: dayOfWeek,
+            isWeekend: isWeekend,
+            libraryWeekendAvailability: weekendAvailable
+        });
+        
+        if (weekendAvailable === 'unavailable') {
+            return {
+                valid: false,
+                message: `${globalSelectedLibrary.name} is not available on weekends. Please select a weekday.`
+            };
+        }
+    }
+    
+    return { valid: true };
+}
+
+// Check if number of users exceeds facility capacity
+function checkFacilityCapacity() {
+    if (!globalSelectedFacility) {
+        return { valid: true }; // If no facility selected, skip check
+    }
+    
+    // Get the number of users input
+    const numUsersInput = document.getElementById('num_users');
+    if (!numUsersInput || !numUsersInput.value) {
+        return { valid: true }; // If no value entered, skip check
+    }
+    
+    const numUsers = parseInt(numUsersInput.value);
+    const facilityCapacity = parseInt(globalSelectedFacility.capacity);
+    
+    console.log('Capacity check:', {
+        numUsers: numUsers,
+        facilityCapacity: facilityCapacity,
+        facilityName: globalSelectedFacility.name,
+        exceeds: numUsers > facilityCapacity
+    });
+    
+    if (numUsers > facilityCapacity) {
+        return {
+            valid: false,
+            message: `Number of users (${numUsers}) exceeds the capacity of ${globalSelectedFacility.name} (${facilityCapacity} persons). Please reduce the number of users or select a different facility.`
+        };
+    }
+    
+    if (numUsers <= 0) {
+        return {
+            valid: false,
+            message: `Number of users must be at least 1.`
+        };
+    }
+    
+    return { valid: true };
+}
+
 // Main validation function
 function validateBookingTime() {
     if (!globalSelectedFacility) return { valid: false, message: "Please select a facility first" };
@@ -926,15 +1142,23 @@ function validateBookingTime() {
     const startTime = startTimeInput.value;
     const endTime = endTimeInput.value;
     
-    // 1. Check facility operating hours
+    // 1. Check facility capacity
+    const capacityCheck = checkFacilityCapacity();
+    if (!capacityCheck.valid) return capacityCheck;
+    
+    // 2. Check weekend availability
+    const weekendCheck = checkWeekendAvailability(selectedDate);
+    if (!weekendCheck.valid) return weekendCheck;
+    
+    // 3. Check facility operating hours
     const validHours = checkFacilityHours(selectedDate, startTime, endTime);
     if (!validHours.valid) return validHours;
     
-    // 2. Check temporary closures
+    // 4. Check temporary closures
     const notClosed = checkTemporaryClosure(selectedDate, startTime, endTime);
     if (!notClosed.valid) return notClosed;
     
-    // 3. Check for conflicts with existing bookings
+    // 5. Check for conflicts with existing bookings
     const noConflicts = checkBookingConflicts(selectedDate, startTime, endTime);
     if (!noConflicts.valid) return noConflicts;
     
