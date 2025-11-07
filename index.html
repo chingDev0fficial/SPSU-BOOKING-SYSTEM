@@ -230,7 +230,33 @@ input[type="submit"]:active {
                     name="name_users" 
                     required
                     >
-            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="subject_topic_purpose">
+                Subject/Topic/Purpose <span class="required">*</span>
+            </label>
+            <input 
+                    type="text" 
+                    id="subject_topic_purpose" 
+                    name="subject_topic_purpose"
+                    placeholder="Enter the subject, topic, or purpose of booking"
+                    required
+                    >
+        </div>
+
+        <div class="form-group">
+            <label for="teacher_coordinator">
+                Teacher/Coordinator <span class="required">*</span>
+            </label>
+            <input 
+                    type="text" 
+                    id="teacher_coordinator" 
+                    name="teacher_coordinator"
+                    placeholder="Enter teacher or coordinator name"
+                    required
+                    >
+        </div>
         
         <hr>
         
@@ -339,7 +365,7 @@ input[type="submit"]:active {
 const libraryAPI            = "https://script.google.com/macros/s/AKfycbw-VYZKX9NYGbRjlKONzbBMjZ9qktK1-U5vifLEQaCtW7Fr8EpG3IYoRe-kZE-Bggiy/exec";
 const facilityAPI           = "https://script.google.com/macros/s/AKfycbx9U1kwoU6jxlybJ13ELMahyKgREE2SbwqmMtrID1kwEYg24oGJBkN4IYEFn9zDBC64/exec";
 const bookingAPI            = "https://script.google.com/macros/s/AKfycbzJpF-LgUQbxDLp98XWrooXDBKDCgQdcYdozbnYoRU-t0BaX_Rge0fDMRjcZMMLz7A/exec";
-const bookingInsertAPI      = "https://script.google.com/macros/s/AKfycbyhME9dWzTA0Cvf1Ni09kgwV3RdKH_DfDEV1CuRtLcu1orlE63E-SqT-l6B3lmVXt1a/exec";
+const bookingInsertAPI      = "https://script.google.com/macros/s/AKfycbwBj87pPBLX23ZxZOR_S_ZQWbm7183LDOyj3e3Yo_cwjgLqBlZ1OGhHS5Asd8rUn_t4/exec";
 
 const selectLibraryType     = document.getElementById("library");
 const facilityGroup         = document.getElementById("facilityGroup");
@@ -351,6 +377,8 @@ const submitBTN             = document.getElementById("submitBTN");
 const bookingNameVal        = document.getElementById('booking_name');
 const numUsersVal           = document.getElementById('num_users');
 const nameUsersVal          = document.getElementById('name_users');
+const subjectTopicVal       = document.getElementById('subject_topic_purpose');
+const teacherCoordVal       = document.getElementById('teacher_coordinator');
 
 const nextBTN               = document.getElementById("nextButton");
 const bookingUserInfoDiv    = document.getElementById("bookingUserInfo");
@@ -398,6 +426,8 @@ function updateNextButtonState() {
     const bookingName = bookingNameVal?.value.trim();
     const numUsers = numUsersVal?.value.trim();
     const nameUsers = nameUsersVal?.value.trim();
+    const subjectTopic = subjectTopicVal?.value.trim();
+    const teacherCoord = teacherCoordVal?.value.trim();
     const libraryVal = selectLibraryType?.value;
     
     // Check if facility group is visible
@@ -407,7 +437,7 @@ function updateNextButtonState() {
     const facilityVal = selectFacility?.value;
 
     // All required fields must be filled
-    let allFilled = !!(bookingName && numUsers && nameUsers && libraryVal);
+    let allFilled = !!(bookingName && numUsers && nameUsers && subjectTopic && teacherCoord && libraryVal);
     
     // If facility is visible, it must also be selected
     if (facilityVisible) {
@@ -494,6 +524,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (nameUsersVal) {
         nameUsersVal.addEventListener('input', updateNextButtonState);
         nameUsersVal.addEventListener('change', updateNextButtonState);
+    }
+
+    if (subjectTopicVal) {
+        subjectTopicVal.addEventListener('input', updateNextButtonState);
+        subjectTopicVal.addEventListener('change', updateNextButtonState);
+    }
+
+    if (teacherCoordVal) {
+        teacherCoordVal.addEventListener('input', updateNextButtonState);
+        teacherCoordVal.addEventListener('change', updateNextButtonState);
     }
 
     if (selectLibraryType) {
