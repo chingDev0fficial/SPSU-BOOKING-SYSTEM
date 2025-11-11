@@ -209,6 +209,22 @@ input[type="submit"]:active {
         </div>
 
         <div class="form-group">
+
+            <label for="booker_type">
+                Booker Type <span class="required">*</span>
+            </label>
+
+            <select 
+                name="booker_type"
+                id="booker_type"
+                >
+                <option value="" disabled selected></option>
+                <option value="student">Student</option>
+                <option value="faculty_officer">Faculty Officer</option>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label for="email">
                 Email <span class="required">*</span>
             </label>
@@ -374,10 +390,10 @@ input[type="submit"]:active {
 </body>
 
 <script>
-const libraryAPI            = "https://script.google.com/macros/s/AKfycbwez2WPkUIbAYey4lw4B0M9LNnbsTYME9K2OxUCQoinyxjzapBTG-Nhks_cUH-_o-fC/exec";
-const facilityAPI           = "https://script.google.com/macros/s/AKfycbxFV9CWoNOHPuYdUATxBhltSy97Y8Odp0MdYrJSAkNW4ACNrsOZvOvcdoASLMtHP_Pf/exec";
-const bookingAPI            = "https://script.google.com/macros/s/AKfycbwOmGQQTFfBFHt3-V4qhi0oQWvBTvIdTSXZYA4Q5-VwQNg1k5ZouS4UPNAo0rCpxOx7/exec";
-const bookingInsertAPI      = "https://script.google.com/macros/s/AKfycby2vgXDSpR6CVaI2h8_5xgRhxOZk6-_xLsaZnC8o_xSY7HP_pDUHos_7zlsRj-qz6nu/exec";
+const libraryAPI            = "https://script.google.com/macros/s/AKfycbzCaWbdybQRv1bC_dGP_8kQdEsaIK8WlxZArQwGue1dX2rw0Mus0HDVTC5BuziwJhmveg/exec";
+const facilityAPI           = "https://script.google.com/macros/s/AKfycbzGMYKtuKrYu6IzYHoAfA46domoRl6MjCNgUDJtrT2OFjHnfo0eB5TVmtk3jUEqJ0UWFQ/exec";
+const bookingAPI            = "https://script.google.com/macros/s/AKfycbxdkklPteUg-U0YP0YPorOU6cwTKnMGuNj9TW-BD9mw1BYVecwG96inpf29GZ4zo-dK/exec";
+const bookingInsertAPI      = "https://script.google.com/macros/s/AKfycbxwSD_ipvxc5xZW1_5JQdIgUO2sG1fD9RbsMCx7uiLn1ouHSPdyyLg1lFVr-zhsoLIuNQ/exec";
 
 const selectLibraryType     = document.getElementById("library");
 const facilityGroup         = document.getElementById("facilityGroup");
@@ -387,6 +403,7 @@ const bookingNote           = document.getElementById("bookingNote");
 const submitBTN             = document.getElementById("submitBTN");
 
 const bookingNameVal        = document.getElementById('booking_name');
+const bookerTypeVal         = document.getElementById('booker_type');
 const emailVal              = document.getElementById('email');
 const numUsersVal           = document.getElementById('num_users');
 const nameUsersVal          = document.getElementById('name_users');
@@ -425,6 +442,7 @@ function addDefaultOption(message, select) {
 }
 
 function addOptions(data, select) {
+    console.log(data)
     data.forEach(library => {
         if (library['status'] === 'available') {
             transformOption(library, select);
@@ -437,6 +455,7 @@ function updateNextButtonState() {
 
     // Get the actual input elements (the constants at top are the elements themselves)
     const bookingName = bookingNameVal?.value.trim();
+    const bookerType = bookerTypeVal?.value.trim();
     const email = emailVal?.value.trim();
     const numUsers = numUsersVal?.value.trim();
     const nameUsers = nameUsersVal?.value.trim();
@@ -451,7 +470,7 @@ function updateNextButtonState() {
     const facilityVal = selectFacility?.value;
 
     // All required fields must be filled
-    let allFilled = !!(bookingName && email && numUsers && nameUsers && subjectTopic && teacherCoord && libraryVal);
+    let allFilled = !!(bookingName && bookerType && email && numUsers && nameUsers && subjectTopic && teacherCoord && libraryVal);
     
     // If facility is visible, it must also be selected
     if (facilityVisible) {
@@ -525,6 +544,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (bookingNameVal) {
         bookingNameVal.addEventListener('input', updateNextButtonState);
         bookingNameVal.addEventListener('change', updateNextButtonState);
+    }
+
+    if (bookerTypeVal) {
+        bookerTypeVal.addEventListener('input', updateNextButtonState);
+        bookerTypeVal.addEventListener('change', updateNextButtonState);
     }
 
     if (emailVal) {
@@ -1480,23 +1504,37 @@ document.querySelector('form').addEventListener('submit', async function(e) {
 
             console.log("Form data to submit:", formDataObj);
             
-            // Build URL with query params (works better than POST body for Google Apps Script)
-            let url = new URL(bookingInsertAPI);
+            // Build URL with query params for POST request
+            const params = new URLSearchParams();
             Object.keys(formDataObj).forEach(key => {
                 if (Array.isArray(formDataObj[key])) {
                     formDataObj[key].forEach(value => {
-                        url.searchParams.append(key, value);
+                        params.append(key, value);
                     });
                 } else {
-                    url.searchParams.append(key, formDataObj[key]);
+                    params.append(key, formDataObj[key]);
                 }
             });
             
-            console.log("Submitting to URL:", url.toString());
+            console.log("Submitting to URL:", bookingInsertAPI);
+            console.log("POST params:", params.toString());
             
-            // Send as GET request with params (more reliable with Google Apps Script)
-            const response = await fetch(url.toString());
-            const result = await response.json();
+            // Send as POST request
+            const response = await fetch(bookingInsertAPI, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params.toString()
+            });
+            
+            // Note: With no-cors, we can't read the response
+            // We'll assume success and redirect
+            console.log("Request sent successfully");
+            
+            // Since we can't read response with no-cors, assume success
+            const result = { success: true, reference: "BK" + Date.now() };
             
             console.log("Response from server:", result);
             

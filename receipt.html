@@ -196,6 +196,14 @@
                 <span class="receipt-value" id="bookingName"></span>
             </div>
             <div class="receipt-row">
+                <span class="receipt-label">Booker Type:</span>
+                <span class="receipt-value" id="bookerType"></span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Email:</span>
+                <span class="receipt-value" id="email"></span>
+            </div>
+            <div class="receipt-row">
                 <span class="receipt-label">Number of Users:</span>
                 <span class="receipt-value" id="numUsers"></span>
             </div>
@@ -287,18 +295,25 @@
             const startTime12h = convertTo12Hour(data.startTime);
             const endTime12h = convertTo12Hour(data.endTime);
 
+            // Capitalize first letter of booker type
+            const bookerTypeFormatted = data.booker_type ? 
+                data.booker_type.charAt(0).toUpperCase() + data.booker_type.slice(1) : 
+                'N/A';
+
             // Populate receipt
             document.getElementById('referenceNumber').textContent = data.reference;
             document.getElementById('bookingName').textContent = data.booking_name;
+            document.getElementById('bookerType').textContent = bookerTypeFormatted;
+            document.getElementById('email').textContent = data.email || 'N/A';
             document.getElementById('numUsers').textContent = data.num_users;
             document.getElementById('nameUsers').textContent = data.name_users;
             document.getElementById('teacherCoordinator').textContent = data.teacher_coordinator;
             document.getElementById('purpose').textContent = data.subject_topic_purpose;
-            document.getElementById('libraryName').textContent = data.library_name;
-            document.getElementById('facilityName').textContent = data.facility_name;
+            document.getElementById('libraryName').textContent = data.libraryName;
+            document.getElementById('facilityName').textContent = data.facilityName;
             document.getElementById('bookingDate').textContent = bookingDate;
             document.getElementById('bookingTime').textContent = `${startTime12h} - ${endTime12h}`;
-            document.getElementById('timestamp').textContent = data.timestamp;
+            document.getElementById('timestamp').textContent = data.bookingDate;
         });
 
         function goBackToBooking() {
