@@ -1064,6 +1064,8 @@ function checkFacilityHours(date, startTime, endTime) {
     
     // Example format: "9:00 AM - 5:00 PM"
     const parts = facilityHours.split(' - ');
+
+    console.log("Parts:", parts);
     
     if (parts.length !== 2) {
         console.error('Failed to split facility hours:', facilityHours);
@@ -1075,6 +1077,8 @@ function checkFacilityHours(date, startTime, endTime) {
     
     const facilityOpen = parts[0].trim();
     const facilityClose = parts[1].trim();
+
+    console.log("Open:", facilityOpen);
     
     // Convert to 24-hour format for comparison
     const facilityOpenTime = convertTo24Hour(facilityOpen);
@@ -1131,6 +1135,8 @@ function checkTemporaryClosure(date, startTime, endTime) {
     
     // Example: "10:00 AM - 1:00 PM"
     const parts = closureTimeRange.split(' - ');
+
+    console.log("Parts:", parts);
     
     // Validate that we have exactly 2 parts
     if (parts.length !== 2) {
@@ -1407,7 +1413,7 @@ async function triggerValidation() {
         let message = result.message;
         
         // Convert any 24-hour times in the message to 12-hour format
-        const timeRegex = /\b([01]?[0-9]|2[0-3]):([0-5][0-9])\b/g;
+        const timeRegex = /\b([01]?[0-9]|2[0-3]):([0-5][0-9])\b(?!\s*[AP]M)/gi;
         message = message.replace(timeRegex, match => convertTo12Hour(match));
         
         paragraph.textContent = message;
