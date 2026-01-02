@@ -26,7 +26,7 @@ const nameUsersVal = document.getElementById("name_users");
 const selectDepartment = document.getElementById("department");
 const selectCourse = document.getElementById("course");
 const yearLevelVal = document.getElementById("year_level");
-const sectionVal = document.getElementById("section");
+// const sectionVal = document.getElementById("section");
 const subjectTopicVal = document.getElementById("subject_topic_purpose");
 const teacherCoordVal = document.getElementById("teacher_coordinator");
 
@@ -87,7 +87,7 @@ function updateNextButtonState() {
   const departmentVal = selectDepartment?.value;
   const courseVal = selectCourse?.value;
   const yearLevel = yearLevelVal?.value;
-  const section = sectionVal?.value.trim();
+  // const section = sectionVal?.value.trim();
   const subjectTopic = subjectTopicVal?.value.trim();
   const teacherCoord = teacherCoordVal?.value.trim();
   const libraryVal = selectLibraryType?.value;
@@ -109,14 +109,15 @@ function updateNextButtonState() {
     departmentVal &&
     courseVal &&
     yearLevel &&
-    section &&
+    // section &&
     subjectTopic &&
     teacherCoord &&
     libraryVal
   );
 
-  // If facility is visible, it must also be selected
-  if (facilityVisible) {
+  // If library is selected, facility must also be selected
+  // (facility is always required when a library is chosen)
+  if (libraryVal) {
     allFilled = allFilled && !!facilityVal;
   }
 
@@ -216,10 +217,10 @@ document.addEventListener("DOMContentLoaded", () => {
     yearLevelVal.addEventListener("change", updateNextButtonState);
   }
 
-  if (sectionVal) {
-    sectionVal.addEventListener("input", updateNextButtonState);
-    sectionVal.addEventListener("change", updateNextButtonState);
-  }
+  // if (sectionVal) {
+  //   sectionVal.addEventListener("input", updateNextButtonState);
+  //   sectionVal.addEventListener("change", updateNextButtonState);
+  // }
 
   if (selectDepartment) {
     selectDepartment.addEventListener("change", updateNextButtonState);
@@ -418,6 +419,9 @@ async function loadFacilities(libraryId) {
   if (currentFacilityValue) {
     selectFacility.value = currentFacilityValue;
   }
+
+  // Update button state after facility group becomes visible
+  updateNextButtonState();
 }
 
 // async function loadDepartments(depratmentId) {
