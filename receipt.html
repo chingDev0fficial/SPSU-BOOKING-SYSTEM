@@ -1,327 +1,108 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Booking Receipt</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .receipt-container {
-            background: white;
-            padding: 40px;
-            max-width: 700px;
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .success-icon {
-            font-size: 64px;
-            color: #27ae60;
-            margin-bottom: 10px;
-        }
-
-        h1 {
-            color: #667eea;
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .reference {
-            color: #999;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .receipt-section {
-            margin: 30px 0;
-        }
-
-        .section-title {
-            font-size: 18px;
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .receipt-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .receipt-row:last-child {
-            border-bottom: none;
-        }
-
-        .receipt-label {
-            font-weight: 600;
-            color: #444;
-            flex: 0 0 40%;
-        }
-
-        .receipt-value {
-            color: #666;
-            text-align: right;
-            flex: 1;
-            word-wrap: break-word;
-        }
-
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
-            text-align: center;
-        }
-
-        .timestamp {
-            color: #999;
-            font-size: 12px;
-            margin-bottom: 15px;
-        }
-
-        .instruction {
-            color: #666;
-            font-size: 14px;
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .button-container {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #f5f5f5;
-            border: 2px solid #e0e0e0;
-            color: #667eea;
-        }
-
-        .btn-secondary:hover {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        @media print {
-            body {
-                background: white;
-            }
-            .button-container {
-                display: none;
-            }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .receipt-container {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 24px;
-            }
-            
-            .button-container {
-                flex-direction: column;
-            }
-        }
-    </style>
-</head>
-<body>
+    <link rel="stylesheet" href="resources/css/receipt-style.css" />
+  </head>
+  <body>
     <div class="receipt-container">
-        <div class="header">
-            <div class="success-icon">✓</div>
-            <h1>Booking Confirmed</h1>
-            <p class="reference">Reference: <span id="referenceNumber"></span></p>
+      <div class="header">
+        <div class="success-icon">✓</div>
+        <h1>Booking Confirmed</h1>
+        <p class="reference">Reference: <span id="referenceNumber"></span></p>
+      </div>
+
+      <div class="receipt-section">
+        <div class="section-title">Booking Information</div>
+        <div class="receipt-row">
+          <span class="receipt-label">Booking Name:</span>
+          <span class="receipt-value" id="bookingName"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Booker Type:</span>
+          <span class="receipt-value" id="bookerType"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Email:</span>
+          <span class="receipt-value" id="email"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Number of Users:</span>
+          <span class="receipt-value" id="numUsers"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Name of Users:</span>
+          <span class="receipt-value" id="nameUsers"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Department:</span>
+          <span class="receipt-value" id="department"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Course:</span>
+          <span class="receipt-value" id="course"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Section:</span>
+          <span class="receipt-value" id="section"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Year Level:</span>
+          <span class="receipt-value" id="yearLevel"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Teacher/Coordinator:</span>
+          <span class="receipt-value" id="teacherCoordinator"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Purpose:</span>
+          <span class="receipt-value" id="purpose"></span>
+        </div>
+      </div>
+
+      <div class="receipt-section">
+        <div class="section-title">Facility Details</div>
+        <div class="receipt-row">
+          <span class="receipt-label">Library:</span>
+          <span class="receipt-value" id="libraryName"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Facility:</span>
+          <span class="receipt-value" id="facilityName"></span>
+        </div>
+      </div>
+
+      <div class="receipt-section">
+        <div class="section-title">Schedule</div>
+        <div class="receipt-row">
+          <span class="receipt-label">Date:</span>
+          <span class="receipt-value" id="bookingDate"></span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Time:</span>
+          <span class="receipt-value" id="bookingTime"></span>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="timestamp">Issued on: <span id="timestamp"></span></div>
+        <div class="instruction">
+          Present it when you arrive at the facility.
         </div>
 
-        <div class="receipt-section">
-            <div class="section-title">Booking Information</div>
-            <div class="receipt-row">
-                <span class="receipt-label">Booking Name:</span>
-                <span class="receipt-value" id="bookingName"></span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Booker Type:</span>
-                <span class="receipt-value" id="bookerType"></span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Email:</span>
-                <span class="receipt-value" id="email"></span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Number of Users:</span>
-                <span class="receipt-value" id="numUsers"></span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Name of Users:</span>
-                <span class="receipt-value" id="nameUsers"></span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Teacher/Coordinator:</span>
-                <span class="receipt-value" id="teacherCoordinator"></span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Purpose:</span>
-                <span class="receipt-value" id="purpose"></span>
-            </div>
+        <div class="button-container">
+          <button class="btn btn-primary" onclick="window.print()">
+            🖨️ Print
+          </button>
+          <button class="btn btn-secondary" onclick="goBackToBooking()">
+            ← New Booking
+          </button>
         </div>
-
-        <div class="receipt-section">
-            <div class="section-title">Facility Details</div>
-            <div class="receipt-row">
-                <span class="receipt-label">Library:</span>
-                <span class="receipt-value" id="libraryName"></span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Facility:</span>
-                <span class="receipt-value" id="facilityName"></span>
-            </div>
-        </div>
-
-        <div class="receipt-section">
-            <div class="section-title">Schedule</div>
-            <div class="receipt-row">
-                <span class="receipt-label">Date:</span>
-                <span class="receipt-value" id="bookingDate"></span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Time:</span>
-                <span class="receipt-value" id="bookingTime"></span>
-            </div>
-        </div>
-
-        <div class="footer">
-            <div class="timestamp">Issued on: <span id="timestamp"></span></div>
-            <div class="instruction">
-                Present it when you arrive at the facility.
-            </div>
-            
-            <div class="button-container">
-                <button class="btn btn-primary" onclick="window.print()">🖨️ Print Receipt</button>
-                <button class="btn btn-secondary" onclick="goBackToBooking()">← New Booking</button>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <script>
-        // Load receipt data from sessionStorage
-        window.addEventListener('DOMContentLoaded', () => {
-            const receiptData = sessionStorage.getItem('bookingReceipt');
-            
-            if (!receiptData) {
-                alert('No receipt data found. Redirecting to booking page...');
-                window.location.href = 'index.html';
-                return;
-            }
-
-            const data = JSON.parse(receiptData);
-
-            // Convert 24-hour time to 12-hour format
-            function convertTo12Hour(timeStr) {
-                if (!timeStr || timeStr.indexOf(':') === -1) return '';
-                
-                let [hours, minutes] = timeStr.split(':').map(Number);
-                const period = hours >= 12 ? 'PM' : 'AM';
-                
-                if (hours > 12) hours -= 12;
-                if (hours === 0) hours = 12;
-                
-                return `${hours}:${minutes.toString().padStart(2, '0')} ${period}`;
-            }
-
-            // Format date
-            const bookingDate = new Date(data.date).toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-
-            const startTime12h = convertTo12Hour(data.startTime);
-            const endTime12h = convertTo12Hour(data.endTime);
-
-            // Capitalize first letter of booker type
-            const bookerTypeFormatted = data.booker_type ? 
-                data.booker_type.charAt(0).toUpperCase() + data.booker_type.slice(1) : 
-                'N/A';
-
-            // Populate receipt
-            document.getElementById('referenceNumber').textContent = data.reference;
-            document.getElementById('bookingName').textContent = data.booking_name;
-            document.getElementById('bookerType').textContent = bookerTypeFormatted;
-            document.getElementById('email').textContent = data.email || 'N/A';
-            document.getElementById('numUsers').textContent = data.num_users;
-            document.getElementById('nameUsers').textContent = data.name_users;
-            document.getElementById('teacherCoordinator').textContent = data.teacher_coordinator;
-            document.getElementById('purpose').textContent = data.subject_topic_purpose;
-            document.getElementById('libraryName').textContent = data.libraryName;
-            document.getElementById('facilityName').textContent = data.facilityName;
-            document.getElementById('bookingDate').textContent = bookingDate;
-            document.getElementById('bookingTime').textContent = `${startTime12h} - ${endTime12h}`;
-            document.getElementById('timestamp').textContent = data.bookingDate;
-        });
-
-        function goBackToBooking() {
-            // Clear receipt data
-            sessionStorage.removeItem('bookingReceipt');
-            // Redirect to booking page
-            window.location.href = 'index.html';
-        }
-    </script>
-</body>
+    <script src="resources/js/receipt-script.js"></script>
+  </body>
 </html>

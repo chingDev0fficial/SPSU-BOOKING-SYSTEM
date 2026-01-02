@@ -1224,6 +1224,8 @@ document.querySelector("form").addEventListener("submit", async function (e) {
         }
       });
 
+      console.log("Parameters:", params);
+
       // Send as POST request
       const response = await fetch(bookingInsertAPI, {
         method: "POST",
