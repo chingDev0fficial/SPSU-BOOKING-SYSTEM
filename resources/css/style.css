@@ -12,11 +12,11 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100%;
   padding: 20px;
-  background-color: #3b3939;
+  /* background-color: #3b3939; */
 }
 
 .form-container {
-  background-color: #3f3f3f;
+  /* background-color: #3f3f3f; */
   padding: 40px;
   width: 100%;
   max-width: 800px;
@@ -41,13 +41,13 @@ body {
 }
 
 h2 {
-  color: #fff;
+  color: #3b3939;
   margin-bottom: 10px;
   font-size: 28px;
 }
 
 .subtitle {
-  color: #fff;
+  color: #3b3939;
   margin-bottom: 30px;
   font-size: 14px;
 }
@@ -59,7 +59,7 @@ h2 {
 label {
   display: block;
   margin-bottom: 8px;
-  color: #fff;
+  color: #3b3939;
   font-weight: 500;
   font-size: 14px;
 }
