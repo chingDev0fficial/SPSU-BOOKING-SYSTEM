@@ -3,6 +3,15 @@ const DEPARTMENT_API =
 const COURSE_API =
   "https://script.google.com/macros/s/AKfycbzUlxHy4R61ywdN6HUE8MFohHVy7AYQXogsLYA8x2_63JmTI5rVfs-nLl3IEkjok4ZQ/exec";
 
+// Detect if the user is on a mobile device
+function isMobileDevice() {
+  return (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    ) || window.innerWidth <= 768
+  );
+}
+
 async function downloadReceipt() {
   const button = event.target; // Get the button that was clicked
   const receiptElement = document.getElementById("receiptInfo");
@@ -61,9 +70,38 @@ async function downloadReceipt() {
     const referenceNumber =
       document.getElementById("referenceNumber").textContent || "booking";
     const cleanReference = referenceNumber.trim().replace(/\s+/g, "-");
+    const fileName = `receipt-${cleanReference}.pdf`;
 
-    // Download the PDF
-    pdf.save(`receipt-${cleanReference}.pdf`);
+    // Mobile-friendly download: open PDF in new tab as blob URL
+    if (isMobileDevice()) {
+      const pdfBlob = pdf.output("blob");
+      const blobUrl = URL.createObjectURL(pdfBlob);
+
+      // Try opening in a new tab first (works on most mobile browsers)
+      const newWindow = window.open(blobUrl, "_blank");
+
+      // If popup was blocked, fall back to a clickable download link
+      if (!newWindow || newWindow.closed) {
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = fileName;
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up after a short delay
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(blobUrl);
+        }, 1000);
+      } else {
+        // Revoke blob URL after a delay to allow the new tab to load
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+      }
+    } else {
+      // Desktop: use standard jsPDF save
+      pdf.save(fileName);
+    }
 
     // Show success state
     button.innerHTML = "✅ Downloaded!";
@@ -148,34 +186,49 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  handleFetchDepartmentAndCourse(data.department, data.course).then(
-    (result) => {
-      console.log("Result:", result);
-      // Populate receipt
-      document.getElementById("referenceNumber").textContent = data.reference;
-      document.getElementById("bookingName").textContent = data.booking_name;
-      document.getElementById("bookerType").textContent = bookerTypeFormatted;
-      document.getElementById("email").textContent = data.email || "N/A";
-      document.getElementById("numUsers").textContent = data.num_users;
-      document.getElementById("nameUsers").textContent = data.name_users;
-      document.getElementById("department").textContent =
-        result.departments[0].name;
-      document.getElementById("course").textContent = result.courses[0].name;
-      document.getElementById("section").textContent = data.section || "N/A";
-      document.getElementById("yearLevel").textContent = data.year_level;
-      document.getElementById("teacherCoordinator").textContent =
-        data.teacher_coordinator;
-      document.getElementById("purpose").textContent =
-        data.subject_topic_purpose;
-      document.getElementById("libraryName").textContent = data.libraryName;
-      document.getElementById("facilityName").textContent = data.facilityName;
-      document.getElementById("bookingDate").textContent = bookingDate;
-      document.getElementById(
-        "bookingTime"
-      ).textContent = `${startTime12h} - ${endTime12h}`;
-      document.getElementById("timestamp").textContent = data.bookingDate;
-    }
-  );
+  const isFaculty = data.booker_type === "faculty";
+
+  // Only fetch department and course if they have values
+  const departmentId = data.department;
+  const courseId = data.course;
+
+  const fetchPromise =
+    departmentId && courseId
+      ? handleFetchDepartmentAndCourse(departmentId, courseId)
+      : Promise.resolve(null);
+
+  fetchPromise.then((result) => {
+    console.log("Result:", result);
+    // Populate receipt
+    document.getElementById("referenceNumber").textContent = data.reference;
+    document.getElementById("bookingName").textContent = data.booking_name;
+    document.getElementById("bookerType").textContent = bookerTypeFormatted;
+    document.getElementById("email").textContent = data.email || "N/A";
+    document.getElementById("numUsers").textContent = data.num_users;
+    document.getElementById("nameUsers").textContent = data.name_users;
+    document.getElementById("department").textContent =
+      result && result.departments && result.departments[0]
+        ? result.departments[0].name
+        : "N/A";
+    document.getElementById("course").textContent =
+      !isFaculty && result && result.courses && result.courses[0]
+        ? result.courses[0].name
+        : "N/A";
+    document.getElementById("section").textContent = data.section || "N/A";
+    document.getElementById("yearLevel").textContent =
+      data.year_level || "N/A";
+    document.getElementById("teacherCoordinator").textContent =
+      data.teacher_coordinator || "N/A";
+    document.getElementById("purpose").textContent =
+      data.subject_topic_purpose;
+    document.getElementById("libraryName").textContent = data.libraryName;
+    document.getElementById("facilityName").textContent = data.facilityName;
+    document.getElementById("bookingDate").textContent = bookingDate;
+    document.getElementById(
+      "bookingTime"
+    ).textContent = `${startTime12h} - ${endTime12h}`;
+    document.getElementById("timestamp").textContent = data.bookingDate;
+  });
 });
 
 function goBackToBooking() {

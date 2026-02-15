@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -31,7 +31,11 @@
               Booker Type <span class="required">*</span>
             </label>
 
-            <select name="booker_type" id="booker_type">
+            <select
+              name="booker_type"
+              id="booker_type"
+              onchange="handleBookerTypeChange(this)"
+            >
               <option value="" disabled selected></option>
               <option value="student">Student</option>
               <option value="faculty">Faculty and Staff</option>

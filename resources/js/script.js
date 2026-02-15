@@ -49,6 +49,57 @@ let pollingInterval = null;
 let lastLibraryData = null;
 let lastFacilityData = null;
 
+// Fields that are only required for students (not for Faculty and Staff)
+const studentOnlyFields = {
+  course: selectCourse,
+  year_level: yearLevelVal,
+  section: document.getElementById("section"),
+  teacher_coordinator: teacherCoordVal,
+};
+
+// Handle booker type change — disable student-only fields for Faculty and Staff
+function handleBookerTypeChange(selectElement) {
+  const isFaculty = selectElement.value === "faculty";
+
+  Object.entries(studentOnlyFields).forEach(([key, field]) => {
+    if (!field) return;
+
+    const formGroup = field.closest(".form-group");
+    const label = formGroup ? formGroup.querySelector("label") : null;
+    const requiredStar = label ? label.querySelector(".required") : null;
+
+    if (isFaculty) {
+      // Disable and clear the field
+      field.disabled = true;
+      field.removeAttribute("required");
+      field.value = "";
+      field.style.backgroundColor = "#f0f0f0";
+      field.style.cursor = "not-allowed";
+      field.style.opacity = "0.6";
+
+      // Hide the required asterisk if present
+      if (requiredStar) requiredStar.style.display = "none";
+    } else {
+      // Re-enable the field
+      field.disabled = false;
+      field.style.backgroundColor = "";
+      field.style.cursor = "";
+      field.style.opacity = "1";
+
+      // Restore required attribute (except section which was never required)
+      if (key !== "section") {
+        field.setAttribute("required", "");
+      }
+
+      // Show the required asterisk if present
+      if (requiredStar) requiredStar.style.display = "";
+    }
+  });
+
+  // Re-check the Next button state
+  updateNextButtonState();
+}
+
 function transformOption(elem, select) {
   const option = document.createElement("option");
   option.value = elem["id"];
@@ -85,12 +136,10 @@ function updateNextButtonState() {
   const numUsers = numUsersVal?.value.trim();
   const nameUsers = nameUsersVal?.value.trim();
   const departmentVal = selectDepartment?.value;
-  const courseVal = selectCourse?.value;
-  const yearLevel = yearLevelVal?.value;
-  // const section = sectionVal?.value.trim();
   const subjectTopic = subjectTopicVal?.value.trim();
-  const teacherCoord = teacherCoordVal?.value.trim();
   const libraryVal = selectLibraryType?.value;
+
+  const isFaculty = bookerType === "faculty";
 
   // Check if facility group is visible
   const facilityVisible =
@@ -99,7 +148,7 @@ function updateNextButtonState() {
       getComputedStyle(facilityGroup).visibility === "visible");
   const facilityVal = selectFacility?.value;
 
-  // All required fields must be filled
+  // All required fields must be filled (common fields for all booker types)
   let allFilled = !!(
     bookingName &&
     bookerType &&
@@ -107,13 +156,17 @@ function updateNextButtonState() {
     numUsers &&
     nameUsers &&
     departmentVal &&
-    courseVal &&
-    yearLevel &&
-    // section &&
     subjectTopic &&
-    teacherCoord &&
     libraryVal
   );
+
+  // Student-only required fields: course, year level, teacher/coordinator
+  if (!isFaculty) {
+    const courseVal = selectCourse?.value;
+    const yearLevel = yearLevelVal?.value;
+    const teacherCoord = teacherCoordVal?.value.trim();
+    allFilled = allFilled && !!(courseVal && yearLevel && teacherCoord);
+  }
 
   // If library is selected, facility must also be selected
   // (facility is always required when a library is chosen)
